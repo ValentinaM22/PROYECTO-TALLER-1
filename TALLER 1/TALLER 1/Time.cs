@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TALLER_1
 {
@@ -22,11 +18,8 @@ namespace TALLER_1
         }
 
         public Time(int hour) : this(hour, 0, 0, 0) { }
-
         public Time(int hour, int minute) : this(hour, minute, 0, 0) { }
-
         public Time(int hour, int minute, int second) : this(hour, minute, second, 0) { }
-
         public Time(int hour, int minute, int second, int millisecond)
         {
             _hour = ValidateHour(hour);
@@ -98,35 +91,37 @@ namespace TALLER_1
 
         public long ToMilliseconds()
         {
-            return ((_hour * 3600 + _minute * 60 + _second) * 1000L) + _millisecond;
+            return ((_hour * 3600L + _minute * 60 + _second) * 1000) + _millisecond;
         }
 
         public long ToSeconds()
         {
-            return (_hour * 3600) + (_minute * 60) + _second;
+            return (_hour * 3600L) + (_minute * 60) + _second;
         }
 
         public long ToMinutes()
         {
-            return (_hour * 60) + _minute;
+            return (_hour * 60L) + _minute;
         }
 
         public Time Add(Time other)
         {
-            int totalMilliseconds = (int)(this.ToMilliseconds() + other.ToMilliseconds());
-            int newHour = (totalMilliseconds / (3600 * 1000)) % 24;
-            totalMilliseconds %= 3600 * 1000;
-            int newMinute = (totalMilliseconds / (60 * 1000)) % 60;
-            totalMilliseconds %= 60 * 1000;
-            int newSecond = (totalMilliseconds / 1000) % 60;
-            int newMillisecond = totalMilliseconds % 1000;
+            long totalMilliseconds = this.ToMilliseconds() + other.ToMilliseconds();
+            totalMilliseconds %= 86400000; // Asegurar que no exceda 24 horas
+
+            int newHour = (int)(totalMilliseconds / (3600 * 1000));
+            totalMilliseconds %= (3600 * 1000);
+            int newMinute = (int)(totalMilliseconds / (60 * 1000));
+            totalMilliseconds %= (60 * 1000);
+            int newSecond = (int)(totalMilliseconds / 1000);
+            int newMillisecond = (int)(totalMilliseconds % 1000);
 
             return new Time(newHour, newMinute, newSecond, newMillisecond);
         }
 
         public bool IsOtherDay(Time other)
         {
-            return (this.ToMilliseconds() + other.ToMilliseconds()) >= (24 * 3600 * 1000);
+            return (this.ToMilliseconds() + other.ToMilliseconds()) >= 86400000;
         }
     }
 }

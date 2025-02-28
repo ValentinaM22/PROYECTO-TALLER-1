@@ -1,37 +1,66 @@
 ﻿using System;
-using System.Collections.Generic;
-using TALLER_1;
 
-class Program
+namespace TALLER_1
 {
-    static void Main()
+    class Program
     {
-        try
+        static void Main(string[] args)
         {
-            var t1 = new Time();
-            var t2 = new Time(2);
-            var t3 = new Time(9, 34);
-            var t4 = new Time(19, 45, 56);
-            var t5 = new Time(23, 43, 45, 678);
-
-            var times = new List<Time> { t1, t2, t3, t4, t5 };
-
-            foreach (Time time in times)
+            try
             {
-                Console.WriteLine($"Time: {time}");
-                Console.WriteLine($"Milliseconds: {time.ToMilliseconds(),15:N0}");
-                Console.WriteLine($"Seconds: {time.ToSeconds(),15:N0}");
-                Console.WriteLine($"Minutes: {time.ToMinutes(),15:N0}");
-                Console.WriteLine($"Add: {time.Add(t3),15}");
-                Console.WriteLine($"Is Other day: {time.IsOtherDay(t4)}");
-                Console.WriteLine();
+                Time[] times = new Time[]
+                {
+                    new Time(0, 0, 0, 0),
+                    new Time(2, 0, 0, 0),
+                    new Time(9, 34, 0, 0),
+                    new Time(7, 45, 56, 0),
+                    new Time(11, 3, 45, 678)
+                };
+
+                Time[] additions = new Time[]
+                {
+                    new Time(9, 34, 0, 0),
+                    new Time(11, 34, 0, 0),
+                    new Time(7, 8, 0, 0),
+                    new Time(5, 19, 56, 0),
+                    new Time(8, 37, 45, 678)
+                };
+
+                for (int i = 0; i < times.Length; i++)
+                {
+                    Console.WriteLine($"Time: {times[i]}");
+
+                    long milliseconds = times[i].ToMilliseconds();
+                    long seconds = times[i].ToSeconds();
+                    long minutes = times[i].ToMinutes();
+
+                    Console.WriteLine($"Milliseconds : {milliseconds:N0}");
+                    Console.WriteLine($"Seconds      : {seconds:N0}");
+                    Console.WriteLine($"Minutes      : {minutes:N0}");
+
+                    Time addedTime = times[i].Add(additions[i]);
+                    Console.WriteLine($"Add          : {addedTime}");
+                    Console.WriteLine($"Is Other day: {times[i].IsOtherDay(additions[i])}");
+                    Console.WriteLine();
+                }
+
+                // Prueba de validación de horas incorrectas
+                try
+                {
+                    Time invalidTime = new Time(45, 0, 0);
+                }
+                catch (ArgumentException e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
             }
 
-            var t6 = new Time(45, -7, 90, -87); // Esto generará una excepción
-        }
-        catch (Exception exception)
-        {
-            Console.WriteLine(exception.Message);
+            Console.WriteLine("Press any key to close this window . . .");
+            Console.ReadKey();
         }
     }
 }

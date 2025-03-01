@@ -18,8 +18,11 @@ namespace TALLER_1
         }
 
         public Time(int hour) : this(hour, 0, 0, 0) { }
+
         public Time(int hour, int minute) : this(hour, minute, 0, 0) { }
+
         public Time(int hour, int minute, int second) : this(hour, minute, second, 0) { }
+
         public Time(int hour, int minute, int second, int millisecond)
         {
             _hour = ValidateHour(hour);
@@ -91,38 +94,41 @@ namespace TALLER_1
 
         public long ToMilliseconds()
         {
-            return ((_hour * 3600L + _minute * 60 + _second) * 1000) + _millisecond;
+            return ((_hour * 3600 + _minute * 60 + _second) * 1000L) + _millisecond;
         }
 
         public long ToSeconds()
         {
-            return (_hour * 3600L) + (_minute * 60) + _second;
+            return (_hour * 3600) + (_minute * 60) + _second;
         }
 
         public long ToMinutes()
         {
-            return (_hour * 60L) + _minute;
+            return (_hour * 60) + _minute;
         }
 
         public Time Add(Time other)
         {
-            long totalMilliseconds = this.ToMilliseconds() + other.ToMilliseconds();
-            totalMilliseconds %= 86400000; // Asegurar que no exceda 24 horas
+            int totalMilliseconds = this._millisecond + other._millisecond;
+            int carrySeconds = totalMilliseconds / 1000;
+            int newMilliseconds = totalMilliseconds % 1000;
 
-            int newHour = (int)(totalMilliseconds / (3600 * 1000));
-            totalMilliseconds %= (3600 * 1000);
-            int newMinute = (int)(totalMilliseconds / (60 * 1000));
-            totalMilliseconds %= (60 * 1000);
-            int newSecond = (int)(totalMilliseconds / 1000);
-            int newMillisecond = (int)(totalMilliseconds % 1000);
+            int totalSeconds = this._second + other._second + carrySeconds;
+            int carryMinutes = totalSeconds / 60;
+            int newSeconds = totalSeconds % 60;
 
-            return new Time(newHour, newMinute, newSecond, newMillisecond);
+            int totalMinutes = this._minute + other._minute + carryMinutes;
+            int carryHours = totalMinutes / 60;
+            int newMinutes = totalMinutes % 60;
+
+            int newHours = (this._hour + other._hour + carryHours) % 24;
+
+            return new Time(newHours, newMinutes, newSeconds, newMilliseconds);
         }
 
         public bool IsOtherDay(Time other)
         {
-            return (this.ToMilliseconds() + other.ToMilliseconds()) >= 86400000;
+            return (this.ToMilliseconds() + other.ToMilliseconds()) >= (24 * 3600 * 1000);
         }
     }
 }
-
